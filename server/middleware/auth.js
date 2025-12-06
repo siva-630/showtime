@@ -1,30 +1,16 @@
 import {clerkClient} from "@clerk/express"
 
-
-
-
-
-
 export const protectAdmin =async(req,res,next)=>{
 
     
     try{
-        const { userId }  = req.auth;
-
-        const user = await clerkClient .users.getUser(userId)
-
-            if (userId === "user_365olstjxLSsC2arOUzaJCUj0E8") {
-            await clerkClient.users.updateUser(userId, {
-                privateMetadata: { role: "admin" }
-            });
-            user.privateMetadata.role = "admin"; // reflect updated role in current request
-        }
+        const { userId }  = req.auth();
 
 
 
 
         if(user.privateMetadata.role  !== 'admin'){
-            return resizeBy.json({success:false,message:"not authorized"})
+            return res.json({success:false,message:"not authorized"})
         }
 
         next();
