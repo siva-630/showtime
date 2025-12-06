@@ -4,10 +4,10 @@ import User from "../models/User.js";
 
 
 // api to check if user is admin
+// api to check if user is admin
 export const isAdmin = async (req, res) => {
-    res.json({ success: true, isAdmin: false })
+    res.json({ success: true, isAdmin: true }) // <--- Change false to true
 }
-
 
 
 
