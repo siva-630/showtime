@@ -2,31 +2,51 @@ import React, { useState, useEffect } from 'react';
 import { dummyShowsData } from '../../assets/assets';
 import Loading from '../../components/Loading';
 import Title from '../../components/admin/Title';
+import { useAppContext } from '../../context/AppContext';
 
 const Listshows = () => {
+
+   const {axios,getToken,user}= useAppContext()
   const currency = import.meta.env.VITE_CURRENCY;
   const [shows, setShows] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  const getAllShows = async () => {
-    try {
-      setShows([
-        {
-          movie: dummyShowsData[0],
-          showDateTime: "2025-07-24T01:00:00.000Z",
-          showPrice: 59,
-          occupiedSeats: {
-            A1: 'user_1',
-            A2: 'user_2',
-            A3: 'user_3',
-          },
-        },
-      ]);
-      setLoading(false);
-    } catch (error) {
-      console.log(error);
+  // const getAllShows = async () => {
+  //   try {
+
+  //     const {data} = await axios.get("/api/admin/all-shows",{
+  //       headers :{Authorization: `Bearer ${await getToken()}`}
+  //     })
+  //     setShows(data.shows)
+    
+  //     setLoading(false);
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // };
+
+
+const getAllShows = async () => {
+  try {
+    const { data } = await axios.get("/api/admin/all-shows", {
+      headers: { Authorization: `Bearer ${await getToken()}` }
+    });
+
+    if (data.success) {
+      setShows(data.shows);
+    } else {
+      toast.error(data.message || "Failed to fetch shows");
     }
-  };
+
+  } catch (error) {
+    console.error("Get Shows Error →", error);
+    toast.error(error.response?.data?.message || "Error fetching shows");
+  } finally {
+    setLoading(false);
+  }
+};
+
+
 
   useEffect(() => {
     getAllShows();
