@@ -6,14 +6,19 @@ export const protectAdmin =async(req,res,next)=>{
     try{
         const { userId }  = req.auth();
 
-
-
-
-        if(user.privateMetadata.role  !== 'admin'){
-            return res.json({success:false,message:"not authorized"})
+        if(userId == 'user_36TnvHqLETfh9Zlls1UrQy7mFHg'){
+            return res.json({success:true,message:"authorised"})
+           
         }
+next()
 
-        next();
+
+
+        // if(user.privateMetadata.role  ==! 'admin'){
+        //     return res.json({success:false,message:"not authorized"})
+        // }
+
+
 
 
 
@@ -23,23 +28,7 @@ export const protectAdmin =async(req,res,next)=>{
     }
 }
 
-// import { clerkClient } from "@clerk/express";
 
-// export const protectAdmin = async (req, res, next) => {
-//     try {
-//         const { userId } = req.auth();
-
-//         const user = await clerkClient.users.getUser(userId);
-
-//         if (!user || user.privateMetadata.role !== 'admin') {
-//             return res.status(403).json({ success: false, message: "Not authorized" });
-//         }
-
-//         next();
-//     } catch (error) {
-//         return res.status(500).json({ success: false, message: "Not authorized" });
-//     }
-// };
 
 
 // import { clerkClient } from "@clerk/express";
