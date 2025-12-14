@@ -4,6 +4,8 @@ import Booking from '../models/Booking.js';
 
 import Show from "../models/Show.js";
 
+import Stripe from 'stripe'
+
 // function check avalibilty of seats for movie 
 
 
@@ -51,7 +53,43 @@ export const  createBooking = async(req,res)=>{
 
 //    stripe gateway
 
-  res.json({success:true,message:'booked successfully'})
+     const stripeInstance = new Stripe(process.env.STRIPE_SECRET_KEY)
+
+     const line_items = [{
+        price_data: {
+            currency: 'INR',
+            product_data: {
+                name: showData.movie.title
+            },
+            unit_amount: Math.round(booking.amount * 100)
+        },
+        quantity: 1
+     }]
+
+     let session
+     try{
+         session = await stripeInstance.checkout.sessions.create({
+             success_url: `${origin}/loading/my-bookings`,
+             cancel_url: `${origin}/my-bookings`,
+             line_items,
+             mode: 'payment',
+             metadata: { bookingId: booking._id.toString() }
+         })
+     }catch(err){
+         console.error('Stripe session creation failed:', err.message)
+         return res.json({ success: false, message: 'Payment session creation failed' })
+     }
+
+     booking.paymentLink = session.url
+     await booking.save()
+
+
+   
+
+
+
+
+  res.json({success:true, url:session.url})
    
 
         }
