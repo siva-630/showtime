@@ -13,10 +13,10 @@ const HeroSection = () => {
       <h1 className='text-5xl md:text-[70px] md:leading-18 font-semibold'>Guardians <br/> of the Galaxy</h1>
       <div className='flex items-center gap-4 text-gray-300'>
         <span>Action | Adventure | Sci-FI</span>
-        <div className=''flex item-center gap-1 >
+        <div className='flex items-center gap-1'>
             <Calendar1Icon className='w-4.5 h-4.5' /> 2018
         </div>
-          <div className=''flex item-center gap-1 >
+          <div className='flex items-center gap-1'>
             <Clock className='w-4.5 h-4.5' /> 2h 8m
         </div>
       </div>

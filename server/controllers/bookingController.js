@@ -24,7 +24,8 @@ const checkSeatsAvailability = async (showId,selectedSeats)=>{
 }
 export const  createBooking = async(req,res)=>{
     try{
-        const{userId}= req.auth();
+        const auth = typeof req.auth === 'function' ? req.auth() : (req.auth || {});
+        const userId = auth?.userId || null;
         const{showId,selectedSeats} = req.body;
         const{ origin }=req.headers;
 
@@ -37,15 +38,13 @@ export const  createBooking = async(req,res)=>{
 
     // create a new booking
     const booking = await Booking.create({
-        user:userId,
-        show:showId,
+        user: userId,
+        show: showId,
         amount: showData.showPrice * selectedSeats.length,
-        bookedSeats:selectedSeats,
-
-
+        bookedSeats: selectedSeats,
     })
-    selectedSeats.map((seat)=>{
-        showData.occupiedSeats[seat] = userId;
+    selectedSeats.forEach((seat)=>{
+        showData.occupiedSeats[seat] = userId || 'guest';
     })
    showData.markModified('occupiedSeats');
    await showData.save();

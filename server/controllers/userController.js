@@ -53,7 +53,14 @@ export const addFavorite = async (req,res)=> {
 export const updateFavorite = async (req,res)=> {
     try{
         const { movieId} = req.body;
-        const userId = req.auth().userId;
+        const auth = req.auth();
+        
+        // Check if user is authenticated
+        if(!auth || !auth.userId){
+            return res.json({success:false,message:"Please login to add favorites"})
+        }
+        
+        const userId = auth.userId;
 
       const user = await clerkClient.users.getUser(userId);
       if(!user.privateMetadata.favorites){

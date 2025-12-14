@@ -74,7 +74,7 @@ axios.defaults.baseURL = import.meta.env.VITE_BASE_URL
             }
 
         }catch(error){
-            console.error(data.message)
+            console.error(error.message)
 
         }
        }

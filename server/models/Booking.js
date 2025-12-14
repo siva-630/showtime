@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 
 
 const bookingSchema = new mongoose.Schema({
-    user:{type:String, required:true, ref:'User'},
+    user:{type:String, required:false, ref:'User'},
 
     show:{type:String,required:true,ref:'Show'},
     amount:{type:Number,required:true},

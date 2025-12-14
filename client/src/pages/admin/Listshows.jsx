@@ -11,40 +11,40 @@ const Listshows = () => {
   const [shows, setShows] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // const getAllShows = async () => {
-  //   try {
+  const getAllShows = async () => {
+    try {
 
-  //     const {data} = await axios.get("/api/admin/all-shows",{
-  //       headers :{Authorization: `Bearer ${await getToken()}`}
-  //     })
-  //     setShows(data.shows)
+      const {data} = await axios.get("/api/admin/all-shows",{
+        headers :{Authorization: `Bearer ${await getToken()}`}
+      })
+      setShows(data.shows)
     
-  //     setLoading(false);
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // };
-
-
-const getAllShows = async () => {
-  try {
-    const { data } = await axios.get("/api/admin/all-shows", {
-      headers: { Authorization: `Bearer ${await getToken()}` }
-    });
-
-    if (data.success) {
-      setShows(data.shows);
-    } else {
-      toast.error(data.message || "Failed to fetch shows");
+      setLoading(false);
+    } catch (error) {
+      console.log(error);
     }
+  };
 
-  } catch (error) {
-    console.error("Get Shows Error →", error);
-    toast.error(error.response?.data?.message || "Error fetching shows");
-  } finally {
-    setLoading(false);
-  }
-};
+
+// const getAllShows = async () => {
+//   try {
+//     const { data } = await axios.get("/api/admin/all-shows", {
+//       headers: { Authorization: `Bearer ${await getToken()}` }
+//     });
+
+//     if (data.success) {
+//       setShows(data.shows);
+//     } else {
+//       toast.error(data.message || "Failed to fetch shows");
+//     }
+
+//   } catch (error) {
+//     console.error("Get Shows Error →", error);
+//     toast.error(error.response?.data?.message || "Error fetching shows");
+//   } finally {
+//     setLoading(false);
+//   }
+// };
 
 
 

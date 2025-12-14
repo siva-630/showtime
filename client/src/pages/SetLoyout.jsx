@@ -6,29 +6,46 @@ import { dummyShowsData, dummyDateTimeData, assets } from '../assets/assets';
 import isoTimeformat from '../lib/isoTimeformat';
 import { toast } from 'react-hot-toast';
 import BlurCircle from '../components/BlurCircle';
+import { useAppContext } from '../context/AppContext';
+import MyBokings from './MyBokings';
 
 const SetLayout = () => {
+
+  const {axios, getToken,user} = useAppContext();
+
   const groupRows = [["A","B"],["C","D"],["E","F"],["G","H"],["I","J"]];
   const { id, date } = useParams();
   const [selectedSeats, setSelectedSeats] = useState([]);
   const [selectedTime, setSelectedTime] = useState(null);
-  const [show, setShow] = useState(null);
+  const [show, setShow] = useState(null); 
+  const [occupiedSeats,setOcupiedSeats] =useState([])
+
   const navigate = useNavigate();
 
   const getShow = async () => {
-    const show = dummyShowsData.find((show) => show._id === id);
-    if (show) {
-      setShow({
-        movie: show,
-        dateTime: dummyDateTimeData
-      });
+
+    try{
+      const {data}= await axios.get(`/api/show/${id}`)
+     if(data.success){
+      setShow(data)
+     } 
+
     }
+    catch(error){
+      console.log(error)
+
+    }
+    
   };
 
   const handleSeatClick = (seatId) => {
     if (!selectedTime) return toast.error("Please select time first");
-    if (!selectedSeats.includes(seatId) && selectedSeats.length >= 5)
+    if (!selectedSeats.includes(seatId) && selectedSeats.length >= 5){
       return toast.error("You can only select 5 seats");
+    }
+    if(occupiedSeats.includes(seatId)){
+      return toast('This seat is already booked')
+    }
 
     setSelectedSeats((prev) =>
       prev.includes(seatId)
@@ -48,7 +65,7 @@ const SetLayout = () => {
                 key={seatId}
                 onClick={() => handleSeatClick(seatId)}
                 className={`h-8 w-8 rounded border border-primary/60 cursor-pointer transition
-                  ${selectedSeats.includes(seatId) ? "bg-primary text-white" : "hover:bg-primary/20"}`}
+                  ${selectedSeats.includes(seatId) ? "bg-primary text-white" : "hover:bg-primary/20"} ${occupiedSeats.includes(seatId) ? "opacity-50 bg-red-500" : ""}`}
               >
                 {seatId}
               </button>
@@ -59,9 +76,50 @@ const SetLayout = () => {
     );
   };
 
+const getOccupiedSeats = async  ()=>{
+  try{
+    const {data} = await axios.get(`/api/booking/seats/${selectedTime.showId}`)
+     if(data.success){
+      setOcupiedSeats(data.occupiedSeats)
+     }else{
+      console.error("Failed to fetch occupied seats:", data.message)
+     }
+  }catch(error){
+    console.log("Error fetching occupied seats:", error);
+
+  }
+}
+
+const bookTickets = async ()=>{
+  try{
+    if(!user) return toast.error('please login')
+      if(!selectedTime || !selectedSeats.length) return toast.error('please selected time and seat');
+
+    const {data}= await axios.post('/api/booking/create',{showId:selectedTime.showId,selectedSeats},{headers:{Authorization:`Bearer ${await getToken()}`}})
+
+    if(data.success){
+      toast.success(data.message);
+      navigate('/my-bookings')
+    }else{
+      toast.error(data.message)
+    }
+  }catch(error){
+
+    toast.error(error.message)
+  }
+}
+
+
+
   useEffect(() => {
     getShow();
   }, []);
+
+  useEffect(()=>{
+    if(selectedTime){
+       getOccupiedSeats()
+    }
+  },[selectedTime])
 
   if (!show) return <Loading />;
 
@@ -112,7 +170,7 @@ const SetLayout = () => {
           </div>
         </div>
         <div>
-              <button onClick={()=> navigate('/my-bookings')} className='flex items-center gap-1 mt-20 px-10 py-3 text-sm bg-primary hover:bg-primary-dull transition rounded-full font-medium cursor-pointer active:scale-95'>Proced to checkout
+              <button onClick={bookTickets} className='flex items-center gap-1 mt-20 px-10 py-3 text-sm bg-primary hover:bg-primary-dull transition rounded-full font-medium cursor-pointer active:scale-95'>Proced to checkout
                  <ArrowRightIcon strokeWidth={3} className='w-4 h-4'/>
               </button>
              

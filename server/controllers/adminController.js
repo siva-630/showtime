@@ -78,7 +78,7 @@ export const getDashboardData = async (req, res) => {
 
 export const getAllShows = async (req, res) => {
     try {
-        const shows = (await Show.find({ showDateTime: { $gte: new Date() } }).populate('movie')).sort({ showDateTime: 1 });
+        const shows = await Show.find({ showDateTime: { $gte: new Date() } }).populate('movie').sort({ showDateTime: 1 });
         res.json({ success: true, shows });
 
     }
@@ -90,19 +90,39 @@ export const getAllShows = async (req, res) => {
 }
 // api to get all bookings
 
+// export const getAllBookings = async (req, res) => {
+//     try {
+//         const bookings = await Booking.find({}).populate('user').populate({
+//             path: 'show',
+//             populate: { path: 'movie' }
+
+//         }).sort({ createdAt: -1 });
+//         res.json({ success: true, bookings });
+
+//     }
+//     catch (error) {
+//         console.error(error);
+//         res.json({ success: false, message: error.message });
+//     }
+
+// }
+
+
+
 export const getAllBookings = async (req, res) => {
     try {
-        const bookings = await Booking.find({}).populate('user').populate({
-            path: 'show',
-            populate: { path: 'movie' }
+        const bookings = await Booking.find({})
+            .sort({ createdAt: -1 })                 // ⬅ Sort first
+            .populate('user')
+            .populate({
+                path: 'show',
+                populate: { path: 'movie' }
+            });
 
-        }).sort({ createdAt: -1 });
         res.json({ success: true, bookings });
-
     }
     catch (error) {
         console.error(error);
         res.json({ success: false, message: error.message });
     }
-
-}
+};
