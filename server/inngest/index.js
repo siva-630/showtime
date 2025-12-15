@@ -107,16 +107,21 @@ const sendBookingConfirmationEmail = inngest.createFunction(
         throw new Error(`Booking not found: ${bookingId}`);
       }
 
-      if (!booking.user || !booking.user.email) {
-        throw new Error(`User email not found for booking: ${bookingId}`);
+      // Get email from user or guest email field
+      const recipientEmail = booking.user?.email || booking.guestEmail;
+      
+      if (!recipientEmail) {
+        throw new Error(`No email found for booking: ${bookingId}`);
       }
+
+      const recipientName = booking.user?.name || 'Guest';
 
       await step.run('send-confirmation-email', async () => {
         const response = await sendEmail ({
-          to:booking.user.email,
+          to:recipientEmail,
           subject: `Payment Confirmation: "${booking.show.movie.title}" booked!`,
           body: `<div style="font-family: Arial, sans-serif; line-height: 1.5;">
-        <h2>Hi ${booking.user.name},</h2>
+        <h2>Hi ${recipientName},</h2>
         <p>Your booking for <strong style="color: #F84565;">"${booking.show.movie.title}"</strong> is confirmed.</p>
         <p>
           <strong>Date:</strong> ${new Date(booking.show.showDateTime).toLocaleDateString('en-US', { timeZone: 'Asia/Kolkata' })}<br/>
