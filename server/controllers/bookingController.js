@@ -4,6 +4,7 @@ import Booking from '../models/Booking.js';
 
 
 import Show from "../models/Show.js";
+import User from '../models/User.js'
 
 import Stripe from 'stripe'
 
@@ -39,12 +40,24 @@ export const  createBooking = async(req,res)=>{
     //   get the shows details
     const showData = await Show.findById(showId).populate('movie');
 
+    // attempt to resolve contact email from auth or request body
+    let contactEmail = req.body.contactEmail || null;
+    if (!contactEmail && userId) {
+        try {
+            const userDoc = await User.findById(userId);
+            contactEmail = userDoc?.email || null;
+        } catch (e) {
+            console.warn('Could not fetch user for contactEmail:', e && e.message ? e.message : e);
+        }
+    }
+
     // create a new booking
     const booking = await Booking.create({
         user: userId,
         show: showId,
         amount: showData.showPrice * selectedSeats.length,
         bookedSeats: selectedSeats,
+        contactEmail,
     })
     selectedSeats.forEach((seat)=>{
         showData.occupiedSeats[seat] = userId || 'guest';

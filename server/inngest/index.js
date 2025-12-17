@@ -119,12 +119,17 @@ const sendBookingConfirmationEmail = inngest.createFunction(
         }
       }
 
-      const userEmail = userDoc?.email;
-      const userName = userDoc?.name || 'Customer';
+      let userEmail = userDoc?.email || null;
+      let userName = userDoc?.name || 'Customer';
+
+      // fallback to contactEmail stored on booking (persisted at booking time)
+      if (!userEmail && booking.contactEmail) {
+        userEmail = booking.contactEmail;
+        userName = booking.contactEmail.split('@')[0] || userName;
+      }
 
       if (!userEmail) {
         console.warn(`No email found for booking: ${bookingId}`);
-        // Do not throw here — missing email should not crash the function
         return;
       }
 
