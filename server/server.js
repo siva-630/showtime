@@ -5,6 +5,7 @@ import connectDB from './configs/db.js';
 import { clerkMiddleware } from '@clerk/express'
 import { serve } from "inngest/express";
 import { inngest, functions } from "./inngest/index.js"
+import { verifyTransporter } from './configs/nodeMailer.js'
 import showRouter from './routes/showRoutes.js';
 import bookingRouter from './routes/bookingRouter.js';
 import adminRouter from './routes/adminRouter.js';
@@ -15,6 +16,10 @@ const  port = 3000;
 
 await connectDB();
 
+// verify SMTP transporter at startup to surface auth/config errors
+verifyTransporter().then((ok) => {
+	if (!ok) console.warn('SMTP verification failed — emails may not send');
+});
 
 app.use('/api/stripe',express.raw({type:'application/json'}),stripeWebhooks)
 

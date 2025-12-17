@@ -28,4 +28,16 @@ const sendEmail = async ({to,subject,body})=>{
         throw err
     }
 }
+const verifyTransporter = async () => {
+    try {
+        await transporter.verify();
+        console.log('SMTP transporter verified');
+        return true;
+    } catch (err) {
+        console.error('SMTP transporter verification failed:', err && err.message ? err.message : err);
+        return false;
+    }
+}
+
+export { verifyTransporter }
 export default sendEmail
