@@ -107,21 +107,33 @@ const sendBookingConfirmationEmail = inngest.createFunction(
         throw new Error(`Booking not found: ${bookingId}`);
       }
 
-      // Get email from user or guest email field
-      const recipientEmail = booking.user?.email || booking.guestEmail;
-      
-      if (!recipientEmail) {
-        throw new Error(`No email found for booking: ${bookingId}`);
+      // Resolve user email: booking.user may be populated or a raw id
+      let userDoc = null;
+      if (booking.user && typeof booking.user === 'object' && booking.user.email) {
+        userDoc = booking.user;
+      } else if (booking.user) {
+        try {
+          userDoc = await User.findById(booking.user);
+        } catch (e) {
+          console.warn('Could not fetch user doc for booking:', bookingId, e && e.message ? e.message : e);
+        }
       }
 
-      const recipientName = booking.user?.name || 'Guest';
+      const userEmail = userDoc?.email;
+      const userName = userDoc?.name || 'Customer';
+
+      if (!userEmail) {
+        console.warn(`No email found for booking: ${bookingId}`);
+        // Do not throw here — missing email should not crash the function
+        return;
+      }
 
       await step.run('send-confirmation-email', async () => {
-        const response = await sendEmail ({
-          to:recipientEmail,
+        const response = await sendEmail({
+          to: userEmail,
           subject: `Payment Confirmation: "${booking.show.movie.title}" booked!`,
           body: `<div style="font-family: Arial, sans-serif; line-height: 1.5;">
-        <h2>Hi ${recipientName},</h2>
+        <h2>Hi ${userName},</h2>
         <p>Your booking for <strong style="color: #F84565;">"${booking.show.movie.title}"</strong> is confirmed.</p>
         <p>
           <strong>Date:</strong> ${new Date(booking.show.showDateTime).toLocaleDateString('en-US', { timeZone: 'Asia/Kolkata' })}<br/>

@@ -29,7 +29,7 @@ export const  createBooking = async(req,res)=>{
     try{
         const auth = typeof req.auth === 'function' ? req.auth() : (req.auth || {});
         const userId = auth?.userId || null;
-        const{showId,selectedSeats, guestEmail} = req.body;
+        const{showId,selectedSeats} = req.body;
         const{ origin }=req.headers;
 
         const isAvailable = await checkSeatsAvailability(showId,selectedSeats);
@@ -42,7 +42,6 @@ export const  createBooking = async(req,res)=>{
     // create a new booking
     const booking = await Booking.create({
         user: userId,
-        guestEmail: !userId ? guestEmail : undefined,
         show: showId,
         amount: showData.showPrice * selectedSeats.length,
         bookedSeats: selectedSeats,
