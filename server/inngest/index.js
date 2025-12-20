@@ -344,7 +344,7 @@ const sendBookingConfirmationEmail = inngest.createFunction(
 
 const sendShowReminders = inngest.createFunction(
   {id: "send-show-reminders"},
-  {corn :" 0 */8 * * *"},
+  {cron: "0 */8 * * *"},
   async({step})=>{
     const now = new Date();
     const in8Hours = new Date(now.getTime() + 8 * 60 * 60 * 1000);
@@ -453,4 +453,5 @@ export const functions = [
   sendShowReminders,
   sendNewShowNotifications
 ];
+
 
