@@ -21,14 +21,13 @@ const MyBokings = () => {
       headers: {Authorization : `Bearer ${await getToken()}`}
     })
 
-
     if(data.success){
-      setBookings(data.bookings)
+      setBookings(data.bookings || [])
     }
 
    }catch(error){
-    console.log(error);
-
+    console.error('Error fetching bookings:', error)
+    setBookings([])
    }
    setIsLoading(false)
   }
@@ -43,7 +42,8 @@ const MyBokings = () => {
     <BlurCircle bottom='0px' left='600px'/>
   </div>
   <h1 className='text-lg font-semibold mb-4'  >My Bookings</h1>
-   {bookings.map((item,index)=>(
+   {bookings.length > 0 ? bookings.map((item,index)=>(
+    item?.show ? (
     <div key={index} className='flex
     flex-col md:flex-row justify-between bg-primary/8  border-primary/20 rounded-lg mt-4 p-2 max-w-3xl '>
       <div className='flex flex-col md:flex-row'>
@@ -68,7 +68,8 @@ const MyBokings = () => {
 
 
       </div>
-   ))}
+    ) : null
+   )) : <p className='text-gray-400'>No bookings found</p>}
 </div>
   ): <Loading/>
 }
