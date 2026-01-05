@@ -1,42 +1,37 @@
-# 🎬 Moving Booking & Movie Management Website
+🎬 Moving Booking & Movie Management Website
 
-[![GitHub](https://cdn.jsdelivr.net/gh/devicons/devicon/icons/github/github-original.svg)](https://github.com/yourusername/moving-booking-website) | [🌐 Live Demo](https://moving-booking.vercel.app)
+🌐 Live Demo :https://showtime-mu.vercel.app/
+ 
 
-A full‑stack **MERN application** that lets users book moving services with secure login, manage movie details stored in MongoDB, and automatically send booking, showtime, and reminder emails. Optimized for real‑world usability and deployed on Vercel.
+A full-stack MERN application that allows users to book moving services, manage movie/showtime details, and automatically send email notifications. The platform features role-based authentication for users and clerks, MongoDB storage for movie details, and a fully responsive design.
 
----
+🚀 Features
+✅ User Features
 
-## 🚀 Features
+🔐 Secure login/signup with JWT authentication.
 
-### 🔐 Authentication
-- Role‑based login for **Users & Clerks**
-- Secure JWT + bcrypt authentication
+📅 Book moving services with location, date, and time selection.
 
-### 🛠 Workflows
-- 📅 Users can **book moving services**
-- 🎟 Clerks can manage and update bookings
-- 🎥 Movies/showtime details stored in MongoDB
+📩 Receive booking confirmation, showtime, and reminder emails automatically.
 
-### 📩 Email Notifications
-- **Booking confirmation emails**
-- **Showtime emails**
-- **Booking reminder emails**
+👀 Track booking status in real-time.
 
-### 📱 UI/UX
-- Fully **responsive design**
-- Real‑time status updates
+✅ Clerk/Admin Features
 
----
+🛠 Access a secure clerk dashboard.
 
-## 🧰 Tech Stack
+✅ Approve, update, or manage bookings efficiently.
 
-| Frontend            | Backend            | Database     | Email Service | Deployment |
-|---------------------|-------------------|--------------|---------------|------------|
-| React               | Node.js + Express | MongoDB      | Nodemailer    | Vercel     |
-| Redux               | JWT + bcrypt      | Mongoose ORM |               |            |
-| Tailwind CSS        | Axios              |              |               |            |
+🎥 Add, update, or delete movie/showtime details stored in MongoDB.
 
----
+📊 Monitor real-time bookings and email notifications.
 
-## 📸 Preview
+✅ Technical Features
 
+💾 MongoDB stores users, bookings, and movie information.
+
+📧 Nodemailer handles all email notifications.
+
+🎨 Responsive UI built with React & Tailwind CSS.
+
+🔄 Full CRUD operations for bookings and movies.
