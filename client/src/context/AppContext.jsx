@@ -69,7 +69,7 @@ axios.defaults.baseURL = import.meta.env.VITE_BASE_URL
                 setFavoriteMovies(data.movies)
             }else{
                 
-            console.error(error)
+            console.error(data.message || "Failed to fetch favorites")
                 
             }
 
