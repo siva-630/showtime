@@ -8,7 +8,25 @@ import Show from "../models/Show.js";
 // api to get now playing movies from tbmdb api
 export const getNowPlaingMovies = async(req,res)=>{
     try{
-   const { data } = await axios.get('https://api.themoviedb.org/3/movie/now_playing',{ 
+   const { data } = await axios.get('https://api.tmdb.org/3/movie/now_playing',{ 
+    headers:{
+        Authorization:`Bearer ${process.env.TMDB_API_KEY}`
+    }
+   })
+   const movies = data.results;
+    res.json({success:true,movies:movies})
+    }
+    catch(error){
+     console.error(error);
+     res.json({success:false,movies:error.message})
+     
+    }
+}
+
+// api to get upcoming movies from tmdb api
+export const getUpcomingMovies = async(req,res)=>{
+    try{
+   const { data } = await axios.get('https://api.tmdb.org/3/movie/upcoming',{ 
     headers:{
         Authorization:`Bearer ${process.env.TMDB_API_KEY}`
     }
@@ -28,16 +46,16 @@ export const getNowPlaingMovies = async(req,res)=>{
 
 export const addShow  = async(req,res)=>{
     try{
-        const {movieId,showsInput,showPrice} = req.body;
+        const {movieId,showsInput,showPrice, theater} = req.body;
         let movie = await Movie.findById(movieId);
         if(!movie){
             const[movieDetailsResponse,movieCreditsResponse] = await Promise.all([
-                axios.get(`https://api.themoviedb.org/3/movie/${movieId}`,{
+                axios.get(`https://api.tmdb.org/3/movie/${movieId}`,{
         headers:{
         Authorization:`Bearer ${process.env.TMDB_API_KEY}`
     }  
                 }),
-                axios.get(`https://api.themoviedb.org/3/movie/${movieId}/credits`,{
+                axios.get(`https://api.tmdb.org/3/movie/${movieId}/credits`,{
                     headers:{Authorization:`Bearer ${process.env.TMDB_API_KEY}`}
                 })
               
@@ -72,6 +90,7 @@ export const addShow  = async(req,res)=>{
                 const dateTimeString =`${showDate}T${time}`;
                 showsToCreate.push({
                     movie:movieId,
+                    theater: theater || 'Main Theater',
                     showDateTime :new Date(dateTimeString),
                     showPrice,
                     occupiedSeats:{}
@@ -131,7 +150,11 @@ export const getShow = async(req,res)=>{
         if(!dateTime[date]){
             dateTime[date] = [];
         }
-        dateTime[date].push({time:show.showDateTime,showId:show._id});
+        dateTime[date].push({
+            time: show.showDateTime, 
+            showId: show._id,
+            theater: show.theater || 'Main Theater'
+        });
 
 
        })

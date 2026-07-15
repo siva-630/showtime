@@ -11,7 +11,7 @@ const MovieCard = ({ movie }) => {
 
     
     return (
-        <div className='flex flex-col justify-between p-3 bg-gray-800 rounded-2xl hover:-translate-y-1 transition duration-300 w-66'>
+        <div className='flex flex-col justify-between p-3 bg-gray-800 rounded-2xl hover:scale-105 hover:shadow-[0_10px_20px_rgba(52,93,83,0.3)] transition-all duration-300 w-66 cursor-pointer group'>
             <img
                 onClick={() => {
                     navigate(`/movie/${movie._id}`);

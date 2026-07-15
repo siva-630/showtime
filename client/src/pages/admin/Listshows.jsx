@@ -3,6 +3,7 @@ import { dummyShowsData } from '../../assets/assets';
 import Loading from '../../components/Loading';
 import Title from '../../components/admin/Title';
 import { useAppContext } from '../../context/AppContext';
+import toast from 'react-hot-toast';
 
 const Listshows = () => {
 
@@ -22,6 +23,23 @@ const Listshows = () => {
       setLoading(false);
     } catch (error) {
       console.log(error);
+    }
+  };
+
+  const deleteShow = async (id) => {
+    try {
+      const { data } = await axios.delete(`/api/admin/delete-show/${id}`, {
+        headers: { Authorization: `Bearer ${await getToken()}` }
+      });
+      if (data.success) {
+        toast.success(data.message);
+        getAllShows(); // Refresh list
+      } else {
+        toast.error(data.message);
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error('Error deleting show');
     }
   };
 
@@ -64,10 +82,13 @@ const Listshows = () => {
           <thead className="bg-primary/10">
             <tr className="bg-primary/20 text-left text-white">
               <th className="text-left p-2">Movie Name</th>
+              <th className="text-left p-2">Release Date</th>
+              <th className="text-left p-2">Theater</th>
               <th className="text-left p-2">Show Time</th>
               <th className="text-left p-2">Price</th>
               <th className="text-left p-2">Total Bookings</th>
               <th className="text-left p-2">Total Revenue</th>
+              <th className="text-left p-2">Action</th>
             </tr>
           </thead>
           <tbody className="text-sm font-light">
@@ -77,12 +98,22 @@ const Listshows = () => {
                 className="border-b border-primary/10 bg-primary/55 even:bg-primary/10"
               >
                 <td className="p-2 min-w-45 pl-5">{show.movie.title}</td>
+                <td className="p-2">{show.movie.release_date}</td>
+                <td className="p-2">{show.theater || 'Main Theater'}</td>
                 <td className="p-2">{formatDate(show.showDateTime)}</td>
                 <td className="p-2">{currency}{show.showPrice}</td>
-                <td className="p-2">{Object.keys(show.occupiedSeats).length}</td>
+                <td className="p-2">{show.totalTickets || 0}</td>
                 <td className="p-2">
                   {currency}
-                  {(Object.keys(show.occupiedSeats).length * show.showPrice).toLocaleString()}
+                  {(show.totalRevenue || 0).toLocaleString()}
+                </td>
+                <td className="p-2">
+                  <button 
+                    onClick={() => deleteShow(show._id)} 
+                    className="text-red-500 hover:text-red-700 font-medium cursor-pointer"
+                  >
+                    Delete
+                  </button>
                 </td>
               </tr>
             ))}

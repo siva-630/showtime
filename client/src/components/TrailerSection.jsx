@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { dummyTrailers } from '../assets/assets';
-import { PlayCircle } from 'lucide-react';
+import { Play } from 'lucide-react';
 
 
 const TrailerSection = () => {
@@ -23,11 +23,13 @@ const TrailerSection = () => {
         {dummyTrailers.map((trailer, idx) => (
           <div
             key={idx}
-            className={`relative cursor-pointer group min-w-[128px] ${currentIdx === idx ? 'ring-4 ring-blue-500' : ''}`}
+            className={`relative cursor-pointer group min-w-[128px] transition-all duration-300 ${currentIdx === idx ? 'ring-2 ring-amber-500 ring-offset-2 ring-offset-black' : 'hover:ring-2 hover:ring-amber-500/50 hover:ring-offset-1 hover:ring-offset-black'} rounded-lg`}
             onClick={() => setCurrentIdx(idx)}
           >
-            <img src={trailer.image} alt="" className='rounded-lg w-32 h-20 object-cover brightness-75'/>
-            <PlayCircle strokeWidth={1.6} className="absolute inset-0 m-auto text-white opacity-80 group-hover:scale-110 transition-transform" size={40} />
+            <img src={trailer.image} alt="" className='rounded-lg w-32 h-20 object-cover brightness-50 group-hover:brightness-90 transition-all duration-300'/>
+            <div className="absolute inset-0 m-auto flex items-center justify-center w-10 h-10 bg-black/50 backdrop-blur-sm rounded-full group-hover:bg-amber-500 transition-all duration-300 drop-shadow-xl scale-95 group-hover:scale-110">
+              <Play className="text-gray-300 group-hover:text-white fill-current opacity-90 transition-all duration-300 ml-1" size={20} />
+            </div>
           </div>
         ))}
       </div>

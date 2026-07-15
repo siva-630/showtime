@@ -93,6 +93,7 @@ export const  createBooking = async(req,res)=>{
              cancel_url: `${origin}/my-bookings`,
              line_items,
              mode: 'payment',
+             payment_method_types: ['card', 'upi'],
              metadata: { bookingId: booking._id.toString() }
          })
      }catch(err){

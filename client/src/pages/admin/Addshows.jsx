@@ -19,6 +19,7 @@ const Addshows = () => {
   const [dateTimeSelection, setDateTimeSelection] = useState({});
   const [dateTimeInput, setDateTimeInput] = useState("");
   const [showPrice, setShowPrice] = useState("");
+  const [theater, setTheater] = useState("Main Theater");
   const [addingShow, setAddingShow] = useState(false);
 
 
@@ -56,7 +57,8 @@ const Addshows = () => {
       const payload = {
         movieId:selectedMovie,
         showsInput,
-        showPrice:Number(showPrice)
+        showPrice:Number(showPrice),
+        theater
       } 
       
     const {data} = await axios.post('/api/show/add',payload,{headers:{
@@ -67,7 +69,8 @@ const Addshows = () => {
       toast.success(data.message)
       setSelectedMovie(null)
       setDateTimeSelection({})
-      setShowPrice(" ")
+      setShowPrice("")
+      setTheater("Main Theater")
     }else{
       toast.error(data.message)
     }
@@ -180,6 +183,20 @@ const Addshows = () => {
             onChange={(e) => setShowPrice(e.target.value)}
             className="bg-transparent outline-none text-white"
             placeholder="Enter price"
+          />
+        </div>
+      </div>
+
+      {/* Theater Selection */}
+      <div className="mt-6">
+        <label className="block text-sm font-medium mb-2">Theater / Screen</label>
+        <div className="inline-flex items-center gap-2 border border-gray-600 px-3 py-2 rounded-md">
+          <input
+            type="text"
+            value={theater}
+            onChange={(e) => setTheater(e.target.value)}
+            className="bg-transparent outline-none text-white"
+            placeholder="e.g. Screen 1"
           />
         </div>
       </div>

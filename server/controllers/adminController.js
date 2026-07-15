@@ -3,45 +3,14 @@ import Show from "../models/Show.js";
 import User from "../models/User.js";
 
 
-// api to check if user is admin
-// api to check if user is admin
+
 export const isAdmin = async (req, res) => {
-    res.json({ success: true, isAdmin: true }) // <--- Change false to true
+    res.json({ success: true, isAdmin: true }) 
 }
 
 
 
-// api to get dashboard data
 
-// export const getDashboardData = async (req, res) => {
-
-
-//     try {
-//         const bookings = await Booking.find({isPaid = true});
-//         const activeShows = await Show.find({
-//  showDateTime: { $gte: new Date() } 
-// }).populate('movie');
-
-
-//         const totalUser = await User.countDocuments();
-
-//         const dashboardData = {
-//             totalBookings: bookings.length,
-//             totalRevenue: bookings.reduce(
-// (acc, booking) => acc + booking.totalAmount, 0),
-//             activeShows,
-//             totalUser
-//         }
-//         res.json({ success: true, dashboardData })
-
-//     }
-//     catch (error) {
-//         console.error(error);
-//         res.json({ success: false, message: error.message })
-
-
-//     }
-// }
 
 
 
@@ -58,7 +27,7 @@ export const getDashboardData = async (req, res) => {
         const dashboardData = {
             totalBookings: bookings.length,
             totalRevenue: bookings.reduce(
-                (acc, booking) => acc + booking.totalAmount, // <-- Change if field name different
+                (acc, booking) => acc + (booking.amount || 0), 
                 0
             ),
             activeShows,
@@ -78,14 +47,27 @@ export const getDashboardData = async (req, res) => {
 
 export const getAllShows = async (req, res) => {
     try {
-        const shows = await Show.find({ showDateTime: { $gte: new Date() } }).populate('movie').sort({ showDateTime: 1 });
-        res.json({ success: true, shows });
+        const shows = await Show.find({ showDateTime: { $gte: new Date() } })
+            .populate('movie')
+            .sort({ showDateTime: 1 })
+            .lean();
 
+        const showsWithStats = await Promise.all(shows.map(async (show) => {
+            // Find only PAID bookings for this specific show
+            const paidBookings = await Booking.find({ show: show._id, isPaid: true });
+            
+            // Dynamically calculate accurate total tickets and revenue based on completed payments
+            const totalTickets = paidBookings.reduce((sum, b) => sum + (b.bookedSeats?.length || 0), 0);
+            const totalRevenue = paidBookings.reduce((sum, b) => sum + (b.amount || 0), 0);
+            
+            return { ...show, totalTickets, totalRevenue };
+        }));
+
+        res.json({ success: true, shows: showsWithStats });
     }
     catch (error) {
         console.error(error);
         res.json({ success: false, message: error.message });
-
     }
 }
 // api to get all bookings
@@ -122,6 +104,17 @@ export const getAllBookings = async (req, res) => {
         res.json({ success: true, bookings });
     }
     catch (error) {
+        console.error(error);
+        res.json({ success: false, message: error.message });
+    }
+};
+
+export const deleteShow = async (req, res) => {
+    try {
+        const { id } = req.params;
+        await Show.findByIdAndDelete(id);
+        res.json({ success: true, message: 'Show deleted successfully' });
+    } catch (error) {
         console.error(error);
         res.json({ success: false, message: error.message });
     }

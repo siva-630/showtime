@@ -46,8 +46,8 @@ const MyBokings = () => {
     item?.show ? (
     <div key={index} className='flex
     flex-col md:flex-row justify-between bg-primary/8  border-primary/20 rounded-lg mt-4 p-2 max-w-3xl '>
-      <div className='flex flex-col md:flex-row'>
-      <img src={ image_base_url + item.show.movie.poster_path} alt=""  className='md:max-w-45 aspect-video h-auto object-cover object-bottom rounded'/>
+      <div className='flex flex-col md:flex-row gap-4'>
+      <img src={ image_base_url + item.show.movie.poster_path} alt={item.show.movie.title} className='w-24 md:w-32 h-auto aspect-[2/3] object-cover rounded-lg shadow-md'/>
       <div className="flex flex-col p-4">
         <p className='text-lg font-semibold'>{item.show.movie.title}</p>
         <p className="text-gray-400 text-sm">{timeFormat(item.show.movie.runtime)}</p>
@@ -58,7 +58,18 @@ const MyBokings = () => {
       <div className='flex flex-col md:items-end md:text-right justify-between p-4'>
        <div className='flex items-center gap-4'>
          <p className='text-2xl font-semibold mb-3'>{currency}{item.amount}</p>
-         {!item.isPaid && <Link  to ={item.paymentLink} className='bg-primary px-4 py-1.5 mb-3 text-sm  rounded-full font-medium cursor-pointer'>Pay Now</Link>}
+         {!item.isPaid && (
+           <div className='flex flex-col items-end'>
+             <Link to={item.paymentLink} className='bg-primary px-4 py-1.5 mb-2 text-sm rounded-full font-medium cursor-pointer'>
+               Pay Now
+             </Link>
+             <div className="text-[10px] text-gray-500 border border-gray-700 p-1.5 rounded bg-gray-900/50 text-right">
+               <p className="font-semibold text-gray-400">Stripe Test Card:</p>
+               <p>No: 4242 4242 4242 4242</p>
+               <p>Exp: 12/30 &nbsp; CVV: 123</p>
+             </div>
+           </div>
+         )}
        </div>
        <div className="text-sm">
          <p><span className='text-gray-400'>Total Tickets: </span>{item.bookedSeats.length}</p>

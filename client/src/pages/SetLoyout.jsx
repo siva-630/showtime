@@ -132,12 +132,17 @@ const bookTickets = async ()=>{
           {show.dateTime[date]?.map((item) => (
             <div
               key={item.time}
-              className={`flex items-center gap-2 px-6 w-max rounded-r-md cursor-pointer transition
+              className={`flex items-center gap-3 px-6 py-2 w-max rounded-r-md cursor-pointer transition
                 ${selectedTime?.time === item.time ? "bg-primary text-white" : "hover:bg-primary/20"}`}
               onClick={() => setSelectedTime(item)}
             >
               <ClockIcon className="w-4 h-4" />
-              <p className="text-sm">{isoTimeformat(item.time)}</p>
+              <div className="flex flex-col text-left">
+                  <p className="text-sm font-medium">{isoTimeformat(item.time)}</p>
+                  <p className={`text-[10px] ${selectedTime?.time === item.time ? "text-gray-200" : "text-gray-400"}`}>
+                      {item.theater}
+                  </p>
+              </div>
             </div>
           ))}
         </div>
