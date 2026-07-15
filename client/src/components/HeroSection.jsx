@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { ArrowRight, Calendar1Icon, Clock } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useAppContext } from '../context/AppContext';
+import { dummyShowsData } from '../assets/assets';
 
 const HeroSection = () => {
   const navigate = useNavigate();
@@ -13,12 +14,15 @@ const HeroSection = () => {
     const fetchUpcoming = async () => {
       try {
         const { data } = await axios.get('/api/show/upcoming');
-        if (data.success && data.movies) {
+        if (data.success && data.movies && data.movies.length > 0) {
           // Take the first 5 movies for the slider
           setUpcoming(data.movies.slice(0, 5));
+        } else {
+          setUpcoming(dummyShowsData.slice(0, 5));
         }
       } catch (error) {
         console.error(error);
+        setUpcoming(dummyShowsData.slice(0, 5));
       }
     };
     fetchUpcoming();
@@ -42,7 +46,7 @@ const HeroSection = () => {
   }
 
   const currentMovie = upcoming[currentSlide];
-  const bgImage = image_base_url + currentMovie.backdrop_path;
+  const getImageUrl = (path) => path?.startsWith('http') ? path : image_base_url + path;
 
   return (
     <div className="relative h-screen w-full overflow-hidden">
@@ -55,7 +59,7 @@ const HeroSection = () => {
           <div 
             key={movie.id} 
             className="flex-shrink-0 h-full w-full flex flex-col items-start justify-center gap-4 px-6 md:px-16 lg:px-36 bg-cover bg-center relative"
-            style={{ backgroundImage: `url(${image_base_url + movie.backdrop_path})` }}
+            style={{ backgroundImage: `url(${getImageUrl(movie.backdrop_path)})` }}
           >
             {/* Dark overlay for better text readability */}
             <div className="absolute inset-0 bg-black/50 bg-gradient-to-r from-black/80 to-transparent"></div>
@@ -94,7 +98,7 @@ const HeroSection = () => {
               {/* Poster Image (Hidden on small screens) */}
               <div className="hidden md:block flex-shrink-0 mr-10 lg:mr-20">
                 <img 
-                  src={image_base_url + movie.poster_path} 
+                  src={getImageUrl(movie.poster_path)} 
                   alt={movie.title + " Poster"} 
                   className="w-64 lg:w-72 rounded-xl shadow-2xl shadow-black/80 border-2 border-gray-700/50"
                 />

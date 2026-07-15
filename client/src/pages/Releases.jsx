@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import BlurCircle from '../components/BlurCircle';
 import { StarIcon } from 'lucide-react';
 import { useAppContext } from '../context/AppContext';
+import { dummyShowsData } from '../assets/assets';
 
 const Releases = () => {
     const { axios, image_base_url } = useAppContext();
@@ -10,11 +11,14 @@ const Releases = () => {
     const fetchUpcoming = async () => {
         try {
             const { data } = await axios.get('/api/show/upcoming');
-            if (data.success) {
+            if (data.success && data.movies && data.movies.length > 0) {
                 setUpcoming(data.movies);
+            } else {
+                setUpcoming(dummyShowsData);
             }
         } catch (error) {
             console.error(error);
+            setUpcoming(dummyShowsData);
         }
     };
 
@@ -30,12 +34,14 @@ const Releases = () => {
 
             <h1 className='text-lg font-medium my-4'>Upcoming Releases</h1>
             
-            {upcoming?.length > 0 ? (
+            {upcoming?.length > 0 ? (() => {
+                const getImageUrl = (path) => path?.startsWith('http') ? path : image_base_url + path;
+                return (
                 <div className='flex flex-wrap max-sm:justify-center gap-8'>
                     {upcoming?.map((movie) => (
                         <div key={movie.id} className='flex flex-col justify-between p-3 bg-gray-800 rounded-2xl hover:scale-105 hover:shadow-[0_10px_20px_rgba(52,93,83,0.3)] transition-all duration-300 w-66 cursor-pointer group'>
                             <img
-                                src={image_base_url + movie.backdrop_path}
+                                src={getImageUrl(movie.backdrop_path)}
                                 alt={movie.title}
                                 className='rounded-lg h-52 w-full object-cover object-right-bottom'
                             />
@@ -53,7 +59,8 @@ const Releases = () => {
                         </div>
                     ))}
                 </div>
-            ) : (
+                );
+            })() : (
                 <div className='flex flex-col items-center justify-center h-64'>
                     <h1 className='text-xl font-bold text-center'>No upcoming releases found</h1>
                 </div>

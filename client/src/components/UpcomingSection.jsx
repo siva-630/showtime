@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import BlurCircle from './BlurCircle';
 import { StarIcon } from 'lucide-react';
 import { useAppContext } from '../context/AppContext';
+import { dummyShowsData } from '../assets/assets';
 
 const UpcomingSection = () => {
     const { axios, image_base_url } = useAppContext();
@@ -10,11 +11,14 @@ const UpcomingSection = () => {
     const fetchUpcoming = async () => {
         try {
             const { data } = await axios.get('/api/show/upcoming');
-            if (data.success && data.movies) {
+            if (data.success && data.movies && data.movies.length > 0) {
                 setUpcoming(data.movies);
+            } else {
+                setUpcoming(dummyShowsData);
             }
         } catch (error) {
             console.error(error);
+            setUpcoming(dummyShowsData);
         }
     };
 
@@ -23,6 +27,8 @@ const UpcomingSection = () => {
     }, []);
 
     if(!upcoming || upcoming.length === 0) return null;
+
+    const getImageUrl = (path) => path?.startsWith('http') ? path : image_base_url + path;
 
   return (
      <div className='px-6 md:px-16 lg:px-44 overflow-hidden mt-10 pb-20'>
@@ -34,7 +40,7 @@ const UpcomingSection = () => {
           {upcoming?.slice(0, 4).map((movie) => (
              <div key={movie.id} className='flex flex-col justify-between p-3 bg-gray-800/50 rounded-2xl hover:scale-105 hover:shadow-[0_10px_20px_rgba(52,93,83,0.3)] transition-all duration-300 w-66 cursor-pointer group'>
                  <img
-                     src={image_base_url + movie.backdrop_path}
+                     src={getImageUrl(movie.backdrop_path)}
                      alt={movie.title}
                      className='rounded-lg h-52 w-full object-cover object-right-bottom'
                  />
