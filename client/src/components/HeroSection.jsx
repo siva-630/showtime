@@ -13,7 +13,7 @@ const HeroSection = () => {
     const fetchUpcoming = async () => {
       try {
         const { data } = await axios.get('/api/show/upcoming');
-        if (data.success) {
+        if (data.success && data.movies) {
           // Take the first 5 movies for the slider
           setUpcoming(data.movies.slice(0, 5));
         }
@@ -25,7 +25,7 @@ const HeroSection = () => {
   }, [axios]);
 
   useEffect(() => {
-    if (upcoming.length === 0) return;
+    if (!upcoming || upcoming.length === 0) return;
     const interval = setInterval(() => {
       setCurrentSlide((prev) => (prev === upcoming.length - 1 ? 0 : prev + 1));
     }, 5000); // Change slide every 5 seconds
@@ -33,7 +33,7 @@ const HeroSection = () => {
     return () => clearInterval(interval);
   }, [upcoming]);
 
-  if (upcoming.length === 0) {
+  if (!upcoming || upcoming.length === 0) {
     return (
       <div className="flex flex-col items-start justify-center gap-4 px-6 md:px-16 lg:px-36 bg-gray-900 bg-cover bg-center h-screen animate-pulse">
         {/* Placeholder while loading */}

@@ -56,8 +56,8 @@ const Navbar = () => {
         {/* Search Results Dropdown */}
         {searchQuery.trim().length > 0 && (
           <div className="absolute top-full mt-2 w-full bg-gray-900 border border-gray-700 rounded-lg shadow-xl shadow-black overflow-hidden z-50 max-h-80 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-600">
-            {shows.filter(movie => movie.title.toLowerCase().includes(searchQuery.toLowerCase())).length > 0 ? (
-              shows.filter(movie => movie.title.toLowerCase().includes(searchQuery.toLowerCase())).map(movie => (
+            {shows?.filter(movie => movie.title?.toLowerCase().includes(searchQuery.toLowerCase())).length > 0 ? (
+              shows.filter(movie => movie.title?.toLowerCase().includes(searchQuery.toLowerCase())).map(movie => (
                 <div 
                   key={movie._id} 
                   className="flex items-center gap-3 p-2 hover:bg-gray-800 cursor-pointer transition"

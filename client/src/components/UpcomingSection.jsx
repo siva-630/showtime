@@ -10,7 +10,7 @@ const UpcomingSection = () => {
     const fetchUpcoming = async () => {
         try {
             const { data } = await axios.get('/api/show/upcoming');
-            if (data.success) {
+            if (data.success && data.movies) {
                 setUpcoming(data.movies);
             }
         } catch (error) {
@@ -22,7 +22,7 @@ const UpcomingSection = () => {
         fetchUpcoming();
     }, []);
 
-    if(upcoming.length === 0) return null;
+    if(!upcoming || upcoming.length === 0) return null;
 
   return (
      <div className='px-6 md:px-16 lg:px-44 overflow-hidden mt-10 pb-20'>
@@ -31,7 +31,7 @@ const UpcomingSection = () => {
             <p className='text-gray-300 font-medium text-lg'>Upcoming Movies</p>
         </div>
         <div className='flex flex-wrap max-sm:justify-center gap-8 mt-4'>
-          {upcoming.slice(0, 4).map((movie) => (
+          {upcoming?.slice(0, 4).map((movie) => (
              <div key={movie.id} className='flex flex-col justify-between p-3 bg-gray-800/50 rounded-2xl hover:scale-105 hover:shadow-[0_10px_20px_rgba(52,93,83,0.3)] transition-all duration-300 w-66 cursor-pointer group'>
                  <img
                      src={image_base_url + movie.backdrop_path}
