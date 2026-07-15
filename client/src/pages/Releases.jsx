@@ -30,9 +30,9 @@ const Releases = () => {
 
             <h1 className='text-lg font-medium my-4'>Upcoming Releases</h1>
             
-            {upcoming.length > 0 ? (
+            {upcoming?.length > 0 ? (
                 <div className='flex flex-wrap max-sm:justify-center gap-8'>
-                    {upcoming.map((movie) => (
+                    {upcoming?.map((movie) => (
                         <div key={movie.id} className='flex flex-col justify-between p-3 bg-gray-800 rounded-2xl hover:scale-105 hover:shadow-[0_10px_20px_rgba(52,93,83,0.3)] transition-all duration-300 w-66 cursor-pointer group'>
                             <img
                                 src={image_base_url + movie.backdrop_path}

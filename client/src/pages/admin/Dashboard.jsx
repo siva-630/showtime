@@ -32,7 +32,7 @@ const Dashboard = () => {
   const dashboardCards = [
     { title: 'Total Bookings', value: dashboardData.totalBookings || '0', icon: ChartLineIcon },
     { title: 'Total Revenue', value: `${currency}${dashboardData.totalRevenue || '0'}`, icon: IndianRupee },
-    { title: 'Active Shows', value: dashboardData.activeShows.length || '0', icon: PlayCircleIcon },
+    { title: 'Active Shows', value: dashboardData.activeShows?.length || '0', icon: PlayCircleIcon },
     { title: 'Total Users', value: dashboardData.totalUsers || '0', icon: UsersIcon },
   ];
 
@@ -96,7 +96,7 @@ const Dashboard = () => {
       <p className="mt-10 text-lg font-medium">Active Shows</p>
       <div className="relative flex flex-wrap gap-6 mt-4 max-w-5xl">
         <BlureCircle top="100px" left="-10%" />
-        {dashboardData.activeShows.length > 0 ? (
+        {dashboardData.activeShows?.length > 0 ? (
           dashboardData.activeShows.map((show) => (
             <div
               key={show._id}
