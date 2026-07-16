@@ -1,59 +1,31 @@
-import {clerkClient} from "@clerk/express"
+import { clerkClient } from "@clerk/express";
+import User from "../models/User.js";
 
-export const protectAdmin =async(req,res,next)=>{
+export const protectAdmin = async (req, res, next) => {
+    try {
+        const auth = typeof req.auth === 'function' ? req.auth() : (req.auth || {});
+        const userId = auth?.userId;
 
-    
-    try{
-        const { userId }  = req.auth();
-
-        if(userId == 'user_36TnvHqLETfh9Zlls1UrQy7mFHg'){
-            return res.json({success:true,message:"authorised"})
-           
+        if (!userId) {
+            return res.json({ success: false, message: "Not authorized. Please log in." });
         }
-next()
 
+        // Fetch user from DB to check their email
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.json({ success: false, message: "User not found." });
+        }
 
+        // Check if the user's email matches the admin email
+        const adminEmail = process.env.ADMIN_EMAIL || process.env.SENDER_EMAIL || "sivalife20@gmail.com";
+        
+        if (user.email !== adminEmail) {
+            return res.json({ success: false, message: "Not authorized. Admin access only." });
+        }
 
-        // if(user.privateMetadata.role  ==! 'admin'){
-        //     return res.json({success:false,message:"not authorized"})
-        // }
-
-
-
-
-
+        next();
+    } catch (error) {
+        console.error("Admin Auth Error:", error);
+        return res.json({ success: false, message: "Server error during admin authentication." });
     }
-    catch(error){
-        return res.json({success:false,message:"not authoried"})
-    }
-}
-
-
-
-
-// import { clerkClient } from "@clerk/express";
-
-// export const protectAdmin = async (req, res, next) => {
-//     try {
-//         const { userId } = req.auth;
-
-//         // ✅ SUPER ADMIN BYPASS: Unconditional access for your specific ID
-//         // This runs before checking Clerk or Database, guaranteeing access.
-//         if (userId === "user_365olstjxLSsC2arOUzaJCUj0E8") {
-//             return next(); 
-//         }
-
-//         // Standard check for other users
-//         const user = await clerkClient.users.getUser(userId);
-
-//         if (!user || user.privateMetadata.role !== 'admin') {
-//             return res.status(403).json({ success: false, message: "Not authorized" });
-//         }
-
-//         next();
-//     } catch (error) {
-//         return res.status(500).json({ success: false, message: "Server error during auth" });
-//     }
-// };
-
-
+};

@@ -1,18 +1,17 @@
 import React, { useEffect } from 'react'
 import AdminNavbar from '../../components/admin/AdminNavbar'
 import AdminSidebar from '../../components/admin/AdminSidebar'
-import { Outlet } from 'react-router-dom'
-// import { useAppContext } from '../../context/AppContext'
-// // import Loading from '../../components/Loading'
+import { Outlet, Navigate } from 'react-router-dom'
+import { useAppContext } from '../../context/AppContext'
 
-const Loyout = () => {
+const Layout = () => {
    
-  //  const {isAdmin, fetchIsAdmin} = useAppContext()
+   const {isAdmin, user} = useAppContext()
 
-  //  useEffect(()=>{
-  //   fetchIsAdmin()
-  //  },[])
-
+   // Wait for admin validation to complete. If they aren't admin, AppContext will redirect them
+   if (!isAdmin) {
+       return null; 
+   }
 
   return  (
    <>
@@ -28,4 +27,4 @@ const Loyout = () => {
   )
 }
 
-export default Loyout
+export default Layout

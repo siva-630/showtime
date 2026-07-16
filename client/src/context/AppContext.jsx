@@ -17,7 +17,7 @@ axios.defaults.baseURL = import.meta.env.VITE_BASE_URL
 
  export  const AppProvider = ({children}) =>{
      
-      //  const [isAdmin , setIsAdmin] = useState(false)
+       const [isAdmin , setIsAdmin] = useState(false)
        const [shows, setShows] = useState([])
        const [favoriteMovies,setFavoriteMovies] = useState([])
        
@@ -28,22 +28,22 @@ axios.defaults.baseURL = import.meta.env.VITE_BASE_URL
        const location = useLocation()
        const navigate = useNavigate()
 
-      //  const fetchIsAdmin = async ()=>{
-      //   try{
-      //       const {data} = await axios.get('/api/admin/is-admin',{headers:
-      //           {Authorization:`Bearer ${await getToken()}`}
-      //       })
-      //       setIsAdmin(data.isAdmin)
+       const fetchIsAdmin = async ()=>{
+        try{
+            const {data} = await axios.get('/api/admin/is-admin',{headers:
+                {Authorization:`Bearer ${await getToken()}`}
+            })
+            setIsAdmin(data.isAdmin)
 
-      //       if(!data.isAdmin && location.pathname.startsWith('/admin')){
-      //           navigate('/')
-      //           toast('You are not authorized to access admin dashboard')
-      //       }
+            if(!data.isAdmin && location.pathname.startsWith('/admin')){
+                navigate('/')
+                toast.error('You are not authorized to access admin dashboard')
+            }
 
-      //   }catch(error){
-      //       console.error(error)
-      //   }
-      //  }
+        }catch(error){
+            console.error(error)
+        }
+       }
        const fetchShows = async  ()=>{
         try{
             const {data}= await axios.get('/api/show/all')
@@ -88,13 +88,13 @@ axios.defaults.baseURL = import.meta.env.VITE_BASE_URL
 
        useEffect(()=>{
      
-            
-           
-             fetchFavoriteMovies()
-            
+            if(user) {
+                fetchIsAdmin()
+                fetchFavoriteMovies()
+            }
             
         
-       },[])
+       },[user])
 
 
      
@@ -102,7 +102,7 @@ axios.defaults.baseURL = import.meta.env.VITE_BASE_URL
         axios,
         
         user, getToken, navigate, shows,
-        favoriteMovies, fetchFavoriteMovies, image_base_url
+        favoriteMovies, fetchFavoriteMovies, image_base_url, isAdmin, fetchIsAdmin
     }
 
     return (
