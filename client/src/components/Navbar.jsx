@@ -1,14 +1,16 @@
 import React, { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom';
 import {assets} from '../assets/assets'; 
-import { MenuIcon, SearchIcon, TicketPlus, XIcon, Clapperboard } from 'lucide-react';
+import { MenuIcon, SearchIcon, TicketPlus, XIcon, Clapperboard, Bot } from 'lucide-react';
 import { useClerk, UserButton, useUser } from '@clerk/clerk-react';
 import { useAppContext } from '../context/AppContext';
+import AIChatbot from './AIChatbot';
 
 const Navbar = () => {
     const [isOpen, setIsOpen] = useState(false);
     const [searchQuery, setSearchQuery] = useState("");
     const [showSearch, setShowSearch] = useState(false);
+    const [isChatOpen, setIsChatOpen] = useState(false);
     const {user} =useUser()
     const {openSignIn}= useClerk()
     const navigate = useNavigate()
@@ -81,6 +83,11 @@ const Navbar = () => {
         )}
       </div>
 
+      <button onClick={() => setIsChatOpen(true)} className="p-2 bg-gray-800/80 hover:bg-gray-700 rounded-full transition-colors relative group">
+        <Bot className="w-5 h-5 text-primary" />
+        <span className="absolute top-0 right-0 w-2 h-2 bg-primary rounded-full animate-ping"></span>
+      </button>
+
      {
       !user ?(
      <button  onClick={openSignIn} className='px-4 py-1 sm:px-7 sm:py-2 bg-primary hover:bg-primary-dull transition rounded-full font-medium cursor-pointer'>Login</button>
@@ -96,6 +103,7 @@ const Navbar = () => {
      
     </div>
     <MenuIcon  className='max-md:ml-4 md:hidden w-8 h-8 cursor-pointer'  onClick={()=>setIsOpen(!isOpen)} />
+    <AIChatbot isOpen={isChatOpen} onClose={() => setIsChatOpen(false)} />
     </div>
   )
 }

@@ -284,8 +284,16 @@ export const getShows =async(req,res)=>{
     }catch(error){
         console.error(error);
         res.json({success:false,message:error.message});
-        
+    }
+}
 
+export const getAllTimings = async(req,res)=>{
+    try{
+        const shows = await Show.find({showDateTime:{$gte: new Date()}}).populate('movie').sort({showDateTime:1});
+        res.json({success:true, shows});
+    }catch(error){
+        console.error(error);
+        res.json({success:false,message:error.message});
     }
 }
 
