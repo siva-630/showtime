@@ -88,11 +88,10 @@ Keep responses helpful, professional, and format your responses with markdown fo
         { role: "user", parts: [{ text: textToSend }] }
       ];
 
-      const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent`, {
+      const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=${apiKey.trim()}`, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
-          'X-goog-api-key': apiKey
+          'Content-Type': 'application/json'
         },
         body: JSON.stringify({ contents }),
         signal: abortControllerRef.current.signal
